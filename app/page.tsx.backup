@@ -1,0 +1,341 @@
+"use client";
+
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+
+type Rarity = "legendary" | "epic" | "rare";
+
+type Artifact = {
+  name: string;
+  rarity: Rarity;
+  category: "Weapons" | "Armor" | "Potions" | "Artifacts";
+  icon: string;
+  description: string;
+};
+
+const artifacts: Artifact[] = [
+  {
+    name: "Aegis of Athena",
+    rarity: "legendary",
+    category: "Armor",
+    icon: "🛡️",
+    description: "The divine shield that turns mortal strikes into whispers.",
+  },
+  {
+    name: "Blade of Helios",
+    rarity: "legendary",
+    category: "Weapons",
+    icon: "⚔️",
+    description: "A sun‑forged sword that leaves trails of starlight.",
+  },
+  {
+    name: "Ambrosia Vial",
+    rarity: "epic",
+    category: "Potions",
+    icon: "🧪",
+    description: "A single sip bends fate back in your favor.",
+  },
+  {
+    name: "Lyre of Orpheus",
+    rarity: "epic",
+    category: "Artifacts",
+    icon: "✨",
+    description: "Melodies that can sway gods, monsters, and destiny itself.",
+  },
+  {
+    name: "Sandals of Hermes",
+    rarity: "rare",
+    category: "Armor",
+    icon: "🛡️",
+    description: "Winged steps that dance between lightning and thunder.",
+  },
+  {
+    name: "Oracle’s Prism",
+    rarity: "rare",
+    category: "Artifacts",
+    icon: "✨",
+    description: "Split time into futures, and choose the one you walk.",
+  },
+];
+
+function rarityStyles(rarity: Rarity) {
+  switch (rarity) {
+    case "legendary":
+      return "bg-gradient-to-r from-olympus-gold via-[#FFE066] to-olympus-gold text-black shadow-[0_0_25px_rgba(255,215,0,0.7)]";
+    case "epic":
+      return "bg-gradient-to-r from-mythic-purple via-purple-500 to-mythic-purple text-white shadow-[0_0_22px_rgba(139,92,246,0.6)]";
+    case "rare":
+      return "bg-gradient-to-r from-aegean-blue via-sky-500 to-aegean-blue text-white shadow-[0_0_20px_rgba(59,130,246,0.6)]";
+  }
+}
+
+export default function Home() {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], [0, 120]);
+  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0.4]);
+
+  const particles = Array.from({ length: 35 });
+
+  return (
+    <main className="min-h-screen bg-[#050816] text-marble-white">
+      {/* Sticky navbar */}
+      <header className="fixed inset-x-0 top-0 z-40">
+        <div className="mx-auto mt-4 flex max-w-6xl items-center justify-between rounded-full border border-white/10 bg-[#050816]/70 px-4 py-2 shadow-[0_18px_40px_rgba(0,0,0,0.75)] backdrop-blur-2xl">
+          <div className="flex items-center gap-2">
+            <span className="text-xl drop-shadow-[0_0_12px_rgba(255,215,0,0.8)]">
+              ⚡
+            </span>
+            <span className="bg-gradient-to-r from-olympus-gold to-marble-white bg-clip-text text-sm font-semibold uppercase tracking-[0.3em] text-transparent">
+              Agora of Olympus
+            </span>
+          </div>
+          <div className="hidden items-center gap-6 text-xs font-medium text-marble-white/70 md:flex">
+            <button className="transition-colors hover:text-olympus-gold">
+              Marketplace
+            </button>
+            <button className="transition-colors hover:text-olympus-gold">
+              Treasures
+            </button>
+            <button className="transition-colors hover:text-olympus-gold">
+              Pantheon
+            </button>
+          </div>
+          <Button
+            size="sm"
+            className="rounded-full bg-olympus-gold px-4 text-xs font-semibold text-black shadow-[0_0_18px_rgba(255,215,0,0.7)] hover:bg-olympus-gold/90"
+          >
+            Connect Relic Wallet
+          </Button>
+        </div>
+      </header>
+
+      {/* HERO */}
+      <section
+        ref={ref}
+        className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-[#0A1128] via-[#1E0A3C] to-[#050816] px-4 py-32"
+      >
+        {/* Grain overlay */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.18] mix-blend-soft-light"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E\")",
+          }}
+        />
+
+        {/* Animated gradient aura */}
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,215,0,0.25),transparent_55%),radial-gradient(circle_at_bottom,_rgba(107,33,168,0.5),transparent_60%)]"
+          animate={{ opacity: [0.6, 0.9, 0.6] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        />
+
+        {/* Floating particles */}
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          {particles.map((_, i) => (
+            <motion.span
+              key={i}
+              className="absolute h-1 w-1 rounded-full bg-olympus-gold/60 shadow-[0_0_10px_rgba(255,215,0,0.9)]"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+              }}
+              animate={{
+                opacity: [0.1, 0.9, 0.1],
+                y: [0, -15, 0],
+                scale: [0.6, 1.2, 0.8],
+              }}
+              transition={{
+                duration: 5 + Math.random() * 6,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: Math.random() * 4,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Content with parallax */}
+        <motion.div
+          style={{ y, opacity }}
+          className="relative z-10 mx-auto flex max-w-5xl flex-col items-center text-center text-marble-white"
+        >
+          <motion.div
+            className="mb-6 flex items-center gap-3 text-sm uppercase tracking-[0.35em] text-olympus-gold/90"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <span className="text-xl">🏛️</span>
+            <span className="h-px w-10 bg-gradient-to-r from-transparent via-olympus-gold/70 to-transparent" />
+            <span>MARKETPLACE OF THE GODS</span>
+            <span className="h-px w-10 bg-gradient-to-r from-transparent via-olympus-gold/70 to-transparent" />
+            <span className="text-xl">🏛️</span>
+          </motion.div>
+
+          <motion.h1
+            className="relative mb-4 bg-gradient-to-br from-olympus-gold via-[#F5F3FF] to-olympus-gold bg-clip-text text-4xl font-serif text-transparent drop-shadow-[0_0_25px_rgba(255,215,0,0.5)] sm:text-5xl md:text-6xl"
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+          >
+            <span className="relative inline-block overflow-hidden">
+              <span className="relative z-10">
+                Welcome to the Agora of Olympus
+              </span>
+              <motion.span
+                aria-hidden
+                className="pointer-events-none absolute inset-0 z-0 translate-x-[-120%] bg-gradient-to-r from-transparent via-white/80 to-transparent"
+                animate={{ translateX: ["-120%", "120%"] }}
+                transition={{
+                  duration: 3.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 1,
+                }}
+                style={{ mixBlendMode: "screen" }}
+              />
+            </span>
+          </motion.h1>
+
+          <motion.p
+            className="mb-10 max-w-2xl text-base text-marble-white/80 sm:text-lg"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.2 }}
+          >
+            Where Legends Trade. Where Heroes Rise. Where Treasures Find Their
+            Destiny.
+          </motion.p>
+
+          <motion.div
+            className="group mb-12 flex flex-wrap items-center justify-center gap-4"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.35 }}
+          >
+            <Button
+              size="lg"
+              className="relative overflow-hidden rounded-full bg-gradient-to-r from-olympus-gold via-[#FFE066] to-olympus-gold px-8 py-6 text-base font-semibold text-black shadow-[0_0_30px_rgba(255,215,0,0.55)] transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_45px_rgba(255,215,0,0.9)]"
+            >
+              <span className="relative z-10">Enter the Marketplace</span>
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-80"
+                style={{ mixBlendMode: "screen" }}
+              />
+            </Button>
+
+            <Button
+              size="lg"
+              variant="outline"
+              className="rounded-full border-2 border-olympus-gold/70 bg-transparent px-8 py-6 text-base font-semibold text-olympus-gold shadow-[0_0_18px_rgba(255,215,0,0.25)] transition-all duration-300 hover:scale-[1.03] hover:bg-olympus-gold hover:text-black hover:shadow-[0_0_35px_rgba(255,215,0,0.75)]"
+            >
+              Begin Your Quest
+            </Button>
+          </motion.div>
+
+          <motion.p
+            className="max-w-xl text-sm text-marble-white/70"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.9 }}
+            transition={{ delay: 0.7, duration: 1 }}
+          >
+            Bid on relics forged in celestial flame, barter potions brewed in
+            forgotten temples, and claim artifacts whispered about only in
+            myth.
+          </motion.p>
+        </motion.div>
+      </section>
+
+      {/* FEATURED ARTIFACTS */}
+      <section className="relative z-10 bg-[#050816] px-4 py-20">
+        <div className="mx-auto flex max-w-6xl flex-col gap-10">
+          <div className="space-y-4 text-center">
+            <h2 className="inline-block bg-gradient-to-r from-olympus-gold to-marble-white bg-clip-text text-3xl font-serif text-transparent md:text-4xl">
+              Legendary Artifacts
+            </h2>
+            <div className="mx-auto h-[2px] w-32 bg-gradient-to-r from-transparent via-olympus-gold to-transparent" />
+            <p className="mx-auto max-w-2xl text-sm text-marble-white/70 md:text-base">
+              Curated relics from the vaults of Olympus. Each artifact carries
+              a story, a power, and a price worthy of the gods.
+            </p>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {artifacts.map((artifact, idx) => (
+              <motion.div
+                key={artifact.name}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ delay: idx * 0.07, duration: 0.45 }}
+              >
+                <Card className="group relative overflow-hidden border border-white/5 bg-white/5 bg-clip-padding shadow-[0_18px_45px_rgba(0,0,0,0.55)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:border-olympus-gold/60 hover:shadow-[0_25px_70px_rgba(0,0,0,0.8)]">
+                  <div className="pointer-events-none absolute inset-0 rounded-xl border border-transparent bg-[radial-gradient(circle_at_top,_rgba(255,215,0,0.28),transparent_55%),radial-gradient(circle_at_bottom,_rgba(30,64,175,0.4),transparent_60%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <CardHeader className="relative space-y-3 pb-2">
+                    <div className="flex items-center justify-between">
+                      <span className="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-[0.28em] text-marble-white/60">
+                        <span className="text-lg drop-shadow-[0_0_8px_rgba(255,215,0,0.8)]">
+                          {artifact.icon}
+                        </span>
+                        {artifact.category}
+                      </span>
+                      <Badge
+                        className={`border-none px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wide ${rarityStyles(
+                          artifact.rarity,
+                        )}`}
+                      >
+                        {artifact.rarity}
+                      </Badge>
+                    </div>
+                    <CardTitle className="text-lg font-semibold text-marble-white">
+                      {artifact.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="relative space-y-4 pb-5">
+                    <div className="relative mb-2 h-32 w-full overflow-hidden rounded-xl bg-[radial-gradient(circle_at_top,_rgba(255,215,0,0.24),transparent_55%),radial-gradient(circle_at_bottom,_rgba(79,70,229,0.55),transparent_60%)] shadow-[0_18px_36px_rgba(15,23,42,0.9)]">
+                      <motion.div
+                        aria-hidden
+                        className="absolute inset-6 rounded-full border border-white/15"
+                        whileHover={{
+                          scale: 1.03,
+                          boxShadow:
+                            "0 0 35px rgba(255,215,0,0.9), 0 0 80px rgba(59,130,246,0.6)",
+                        }}
+                        transition={{ duration: 0.4 }}
+                      />
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.4),transparent_55%)] opacity-70 mix-blend-screen" />
+                    </div>
+                    <p className="text-sm leading-relaxed text-marble-white/75">
+                      {artifact.description}
+                    </p>
+                    <div className="mt-3 flex items-center justify-between">
+                      <span className="text-xs uppercase tracking-[0.25em] text-marble-white/40">
+                        Tap into its power
+                      </span>
+                      <Button
+                        size="sm"
+                        className="translate-y-3 rounded-full bg-gradient-to-r from-olympus-gold/90 to-olympus-gold px-4 text-xs font-semibold text-black opacity-0 shadow-[0_0_18px_rgba(255,215,0,0.7)] transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
+                      >
+                        View Details
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
